@@ -1,16 +1,20 @@
 version: '3'
 services:
   nginx:
-    image: nginx:latest
+    build:
+      context: ./docker/nginx/
     ports:
-      - "8080:80"
+      - "8082:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - node-service
 
   node-service:
-    build: .
+    build:
+      context: ./docker/nginx
+    ports:
+      - "8081:80"
     environment:
       - DB_HOST=db
       - DB_USER=root
@@ -21,12 +25,20 @@ services:
       - db
 
   db:
-    image: mysql:5.7
-    environment:
-      - MYSQL_DATABASE=books
-      - MYSQL_ROOT_PASSWORD=s1mpl3
+    build:
+      context: .
+      dockerfile: docker/db/Dockerfile
+    restart: always
+    ports:
+    - "23306:3306"
     volumes:
-      - db_data:/var/lib/mysql
+      - "./_data_/db:/var/lib/mysql:Z"
+    environment:
+      MYSQL_ROOT_PASSWORD: s1mpl3
+      MYSQL_DATABASE: books
+      MYSQL_USER: root
+      MYSQL_PASSWORD: s1mpl3
+      MYSQL_HOST: localhost
 
 volumes:
   db_data:
