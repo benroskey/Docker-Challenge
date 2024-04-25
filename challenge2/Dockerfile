@@ -1,20 +1,7 @@
-# Use an official Node runtime as the base image
 FROM node:14
-
-# Set the working directory in the container to /app
-WORKDIR /app
-
-# Copy package.json and package-lock.json to the working directory
+WORKDIR /usr/src/app
 COPY package*.json ./
-
-# Install any needed packages
 RUN npm install
-
-# Bundle app source
 COPY . .
-
-# Make port 80 available to the world outside this container
-EXPOSE 80
-
-# Run the app when the container launches
-CMD ["npm", "start"]
+EXPOSE 3000
+CMD [ "node", "server.js" ]
